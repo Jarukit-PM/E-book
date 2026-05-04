@@ -17,12 +17,12 @@
   "tocAnchors": {
     "preface": 1,
     "ch1": 4,
-    "ch2": 7,
-    "ch3": 11,
-    "ch4": 14,
-    "ch5": 17,
-    "ch6": 20,
-    "epilogue": 23
+    "ch2": 6,
+    "ch3": 8,
+    "ch4": 10,
+    "ch5": 12,
+    "ch6": 14,
+    "epilogue": 16
   },
   "sequence": [
     {
@@ -94,34 +94,6 @@
     {
       "type": "markdown",
       "file": "016.md"
-    },
-    {
-      "type": "markdown",
-      "file": "017.md"
-    },
-    {
-      "type": "markdown",
-      "file": "018.md"
-    },
-    {
-      "type": "markdown",
-      "file": "019.md"
-    },
-    {
-      "type": "markdown",
-      "file": "020.md"
-    },
-    {
-      "type": "markdown",
-      "file": "021.md"
-    },
-    {
-      "type": "markdown",
-      "file": "022.md"
-    },
-    {
-      "type": "markdown",
-      "file": "023.md"
     },
     {
       "type": "end"

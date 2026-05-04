@@ -116,7 +116,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
             {paragraphs.map((p, i) => (
               <p
                 key={i}
-                className={`mb-3 text-justify font-serif text-sm leading-relaxed text-ink md:text-[0.95rem] ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
+                className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
               >
                 {p}
               </p>
@@ -131,21 +131,23 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
         <PageFrame ref={ref} variant="paper">
           <div className="book-body flex h-full flex-col px-7 pb-8 pt-8 md:px-9 md:pt-10">
             {meta.showTitle ? (
-              <h2 className="mb-4 font-display text-base font-semibold leading-snug text-ink md:text-lg">
-                {meta.titleLine}
-              </h2>
+              <>
+                <h2 className="mb-3 font-display text-base font-semibold leading-snug text-ink md:text-lg">
+                  {meta.titleLine}
+                </h2>
+                <div className="mb-3 shrink-0">
+                  <img
+                    src={epilogueArt}
+                    alt=""
+                    className="mx-auto max-h-[min(180px,28vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(220px,32vh)]"
+                  />
+                </div>
+              </>
             ) : null}
-            <div className="mb-4 shrink-0">
-              <img
-                src={epilogueArt}
-                alt=""
-                className="mx-auto max-h-[min(180px,28vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(220px,32vh)]"
-              />
-            </div>
             {paragraphs.map((p, i) => (
               <p
                 key={i}
-                className={`mb-3 text-justify font-serif text-sm leading-relaxed text-ink md:text-[0.95rem] ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
+                className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
               >
                 {p}
               </p>
@@ -161,7 +163,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
           {paragraphs.map((p, i) => (
             <p
               key={i}
-              className={`mb-3 text-justify font-serif text-sm leading-relaxed text-ink md:text-[0.95rem] ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
+              className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
             >
               {p}
             </p>

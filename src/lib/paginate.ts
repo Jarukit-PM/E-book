@@ -1,13 +1,41 @@
 import type { ParsedBook } from "../content/parseBook";
 
-/** ย่อหน้าทั่วไปต่อหน้า — ปรับให้สอดคล้องความสูงหน้า flip book (~520–760px) เพื่อลดพื้นที่ว่าง */
-export const DEFAULT_MAX_CHARS_PER_PAGE = 1500;
+/** ย่อหน้าทั่วไปต่อหน้า — โหลดให้เต็มหน้ามากที่สุด (ยอมให้หน้าสุดท้ายก่อนขึ้นบทใหม่ว่างได้) */
+export const DEFAULT_MAX_CHARS_PER_PAGE = 2600;
 
-/** ย่อหน้าในหน้าแรกของบท (มีหัวบท + ภาพประกอบ จึงใช้โควต้าต่ำกว่าหน้าถัดไปเล็กน้อย) */
-const CHAPTER_FIRST_PAGE_BODY_CHARS = 780;
+/** ย่อหน้าในหน้าแรกของบท (หัวบท + ภาพกินพื้นที่ — โควต้ายังเพิ่มได้เพราะต้องการให้เนื้อหาติดกันบนหน้าเดียว) */
+const CHAPTER_FIRST_PAGE_BODY_CHARS = 1400;
 
 /** ย่อหน้าหลังหัวคำนำ+คำคมในหน้าเดียวกัน */
-const PREFACE_OPENING_BODY_CHARS = 720;
+const PREFACE_OPENING_BODY_CHARS = 1100;
+
+/** หน้าแรกบทส่งท้าย (หัว + ภาพ Me, Inc. ใช้พื้นที่มาก) */
+const EPILOGUE_FIRST_PAGE_BODY_CHARS = 950;
+
+/** รวมหน้าสุดท้ายที่เหลือเนื้อน้อยเกินไปเข้ากับหน้าก่อนหน้า ลดหน้าว่างปลายบท */
+function mergeUnderfilledTailPages(
+  pages: string[][],
+  maxChars: number,
+): string[][] {
+  const out = pages.map((p) => [...p]);
+  const orphanThreshold = Math.min(520, Math.floor(maxChars * 0.28));
+  while (out.length >= 2) {
+    const last = out[out.length - 1]!;
+    const prev = out[out.length - 2]!;
+    const lastLen = last.join("").length;
+    const prevLen = prev.join("").length;
+    if (
+      lastLen <= orphanThreshold &&
+      prevLen + lastLen <= Math.floor(maxChars * 1.55)
+    ) {
+      out[out.length - 2] = [...prev, ...last];
+      out.pop();
+    } else {
+      break;
+    }
+  }
+  return out;
+}
 
 export function paginateParagraphs(
   paragraphs: string[],
@@ -52,7 +80,8 @@ export function paginateParagraphs(
     count += trimmed.length;
   }
   pushBucket();
-  return pages.length > 0 ? pages : [[]];
+  const filled = pages.length > 0 ? pages : [[]];
+  return mergeUnderfilledTailPages(filled, maxChars);
 }
 
 /** แยกย่อหน้าต้นๆ ให้จบในหน้าเดียวกับส่วนหัว (หัวข้อ/คำคม) */
@@ -175,17 +204,32 @@ export function buildPageSpecs(book: ParsedBook): {
     }
   }
 
-  const epiPages = paginateParagraphs(book.epilogue.paragraphs);
-  epiPages.forEach((paras, i) => {
-    if (paras.length === 0) return;
+  let { head: epiFirst, tail: epiRest } = takeLeadingParagraphs(
+    book.epilogue.paragraphs,
+    EPILOGUE_FIRST_PAGE_BODY_CHARS,
+  );
+  if (epiFirst.length === 0 && book.epilogue.paragraphs.length > 0) {
+    epiFirst = [book.epilogue.paragraphs[0]];
+    epiRest = book.epilogue.paragraphs.slice(1);
+  }
+  if (epiFirst.length > 0) {
+    specs.push({
+      kind: "epilogue-body",
+      paragraphs: epiFirst,
+      dropCap: true,
+      showTitle: true,
+    });
+    anchorToIndex.epilogue = specs.length - 1;
+  }
+  for (const paras of paginateParagraphs(epiRest, DEFAULT_MAX_CHARS_PER_PAGE)) {
+    if (paras.length === 0) continue;
     specs.push({
       kind: "epilogue-body",
       paragraphs: paras,
-      dropCap: i === 0,
-      showTitle: i === 0,
+      dropCap: false,
+      showTitle: false,
     });
-    if (i === 0) anchorToIndex.epilogue = specs.length - 1;
-  });
+  }
 
   specs.push({ kind: "end" });
   specs.push({ kind: "cover-back" });
