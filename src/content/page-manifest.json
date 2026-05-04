@@ -1,0 +1,90 @@
+{
+  "meta": {
+    "title": "อย่าอ่าน! ถ้าคุณยังสนุกกับการเป็นหนี้เพื่อรักษาหน้าตาทางสังคม",
+    "titleEn": "(Do Not Read! If you still enjoy being in debt for a fake lifestyle)",
+    "author": "จารุกิตติ์ ปานเอี่ยม",
+    "tocEntries": [
+      "คำนำผู้เขียน: คำเตือนก่อนเปิดอ่าน"
+    ]
+  },
+  "tocAnchors": {
+    "preface": 1,
+    "ch1": 3,
+    "ch2": 5,
+    "ch3": 7,
+    "ch4": 9,
+    "ch5": 11,
+    "ch6": 13,
+    "epilogue": 15
+  },
+  "sequence": [
+    {
+      "type": "cover-front"
+    },
+    {
+      "type": "markdown",
+      "file": "001.md"
+    },
+    {
+      "type": "toc"
+    },
+    {
+      "type": "markdown",
+      "file": "002.md"
+    },
+    {
+      "type": "markdown",
+      "file": "003.md"
+    },
+    {
+      "type": "markdown",
+      "file": "004.md"
+    },
+    {
+      "type": "markdown",
+      "file": "005.md"
+    },
+    {
+      "type": "markdown",
+      "file": "006.md"
+    },
+    {
+      "type": "markdown",
+      "file": "007.md"
+    },
+    {
+      "type": "markdown",
+      "file": "008.md"
+    },
+    {
+      "type": "markdown",
+      "file": "009.md"
+    },
+    {
+      "type": "markdown",
+      "file": "010.md"
+    },
+    {
+      "type": "markdown",
+      "file": "011.md"
+    },
+    {
+      "type": "markdown",
+      "file": "012.md"
+    },
+    {
+      "type": "markdown",
+      "file": "013.md"
+    },
+    {
+      "type": "markdown",
+      "file": "014.md"
+    },
+    {
+      "type": "end"
+    },
+    {
+      "type": "cover-back"
+    }
+  ]
+}
