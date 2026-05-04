@@ -62,7 +62,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
     if (meta.kind === "preface-open") {
       return (
         <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-12 pt-9 md:px-9 md:pt-10">
+          <div className="book-body flex h-full flex-col px-7 pb-8 pt-9 md:px-9 md:pt-10">
             <h2 className="font-display text-lg font-semibold leading-snug text-ink md:text-xl">
               {meta.title}
             </h2>
@@ -86,7 +86,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
       const titleDisplay = meta.titleLine.replace(/^บทที่ \d+:\s*/, "");
       return (
         <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-14 pt-6 md:px-9 md:pt-8">
+          <div className="book-body flex h-full flex-col px-7 pb-8 pt-6 md:px-9 md:pt-8">
             <header className="mb-4 shrink-0 border-b border-paper-300/60 pb-3 md:mb-5">
               <div className="flex items-start gap-3">
                 <span className="font-display text-3xl font-bold leading-none text-cover-accent/90 md:text-4xl">
@@ -109,7 +109,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
                 <img
                   src={CHAPTER_ART[meta.chapterNum]}
                   alt=""
-                  className="mx-auto max-h-[min(200px,32vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(240px,36vh)]"
+                  className="mx-auto max-h-[min(160px,26vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(200px,30vh)]"
                 />
               </div>
             ) : null}
@@ -129,7 +129,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
     if (meta.kind === "epilogue") {
       return (
         <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-14 pt-8 md:px-9 md:pt-10">
+          <div className="book-body flex h-full flex-col px-7 pb-8 pt-8 md:px-9 md:pt-10">
             {meta.showTitle ? (
               <h2 className="mb-4 font-display text-base font-semibold leading-snug text-ink md:text-lg">
                 {meta.titleLine}
@@ -139,7 +139,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
               <img
                 src={epilogueArt}
                 alt=""
-                className="mx-auto max-h-[min(220px,34vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(260px,38vh)]"
+                className="mx-auto max-h-[min(180px,28vh)] w-full rounded-sm object-contain ring-1 ring-ink/10 md:max-h-[min(220px,32vh)]"
               />
             </div>
             {paragraphs.map((p, i) => (
@@ -157,7 +157,7 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
 
     return (
       <PageFrame ref={ref} variant="paper">
-        <div className="book-body flex h-full flex-col px-7 pb-14 pt-8 md:px-9 md:pt-10">
+        <div className="book-body flex h-full flex-col px-7 pb-8 pt-8 md:px-9 md:pt-10">
           {paragraphs.map((p, i) => (
             <p
               key={i}

@@ -1,13 +1,13 @@
 import type { ParsedBook } from "../content/parseBook";
 
-/** ย่อหน้าทั่วไปต่อหน้า */
-export const DEFAULT_MAX_CHARS_PER_PAGE = 560;
+/** ย่อหน้าทั่วไปต่อหน้า — ปรับให้สอดคล้องความสูงหน้า flip book (~520–760px) เพื่อลดพื้นที่ว่าง */
+export const DEFAULT_MAX_CHARS_PER_PAGE = 1500;
 
-/** ย่อหน้าในหน้าแรกของบท (รวมหัวบทแล้วเหลือพื้นที่อ่าน) */
-const CHAPTER_FIRST_PAGE_BODY_CHARS = 480;
+/** ย่อหน้าในหน้าแรกของบท (มีหัวบท + ภาพประกอบ จึงใช้โควต้าต่ำกว่าหน้าถัดไปเล็กน้อย) */
+const CHAPTER_FIRST_PAGE_BODY_CHARS = 780;
 
 /** ย่อหน้าหลังหัวคำนำ+คำคมในหน้าเดียวกัน */
-const PREFACE_OPENING_BODY_CHARS = 400;
+const PREFACE_OPENING_BODY_CHARS = 720;
 
 export function paginateParagraphs(
   paragraphs: string[],
