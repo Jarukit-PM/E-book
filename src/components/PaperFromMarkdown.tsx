@@ -53,16 +53,16 @@ function splitParagraphs(body: string): string[] {
     .filter(Boolean);
 }
 
-type Props = { source: string };
+type Props = { source: string; bookPageNumber?: number };
 
 export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
-  function PaperFromMarkdown({ source }, ref) {
+  function PaperFromMarkdown({ source, bookPageNumber }, ref) {
     const { meta, paragraphs } = parsePaperFile(source);
 
     if (meta.kind === "preface-open") {
       return (
-        <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-8 pt-9 md:px-9 md:pt-10">
+        <PageFrame ref={ref} variant="paper" bookPageNumber={bookPageNumber}>
+          <div className="book-body flex h-full flex-col px-7 pb-10 pt-9 md:px-9 md:pt-10">
             <h2 className="font-display text-lg font-semibold leading-snug text-ink md:text-xl">
               {meta.title}
             </h2>
@@ -85,8 +85,8 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
     if (meta.kind === "chapter-start") {
       const titleDisplay = meta.titleLine.replace(/^บทที่ \d+:\s*/, "");
       return (
-        <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-8 pt-6 md:px-9 md:pt-8">
+        <PageFrame ref={ref} variant="paper" bookPageNumber={bookPageNumber}>
+          <div className="book-body flex h-full flex-col px-7 pb-10 pt-6 md:px-9 md:pt-8">
             <header className="mb-4 shrink-0 border-b border-paper-300/60 pb-3 md:mb-5">
               <div className="flex items-start gap-3">
                 <span className="font-display text-3xl font-bold leading-none text-cover-accent/90 md:text-4xl">
@@ -128,8 +128,8 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
 
     if (meta.kind === "epilogue") {
       return (
-        <PageFrame ref={ref} variant="paper">
-          <div className="book-body flex h-full flex-col px-7 pb-8 pt-8 md:px-9 md:pt-10">
+        <PageFrame ref={ref} variant="paper" bookPageNumber={bookPageNumber}>
+          <div className="book-body flex h-full flex-col px-7 pb-10 pt-8 md:px-9 md:pt-10">
             {meta.showTitle ? (
               <>
                 <h2 className="mb-3 font-display text-base font-semibold leading-snug text-ink md:text-lg">
@@ -158,8 +158,8 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
     }
 
     return (
-      <PageFrame ref={ref} variant="paper">
-        <div className="book-body flex h-full flex-col px-7 pb-8 pt-8 md:px-9 md:pt-10">
+      <PageFrame ref={ref} variant="paper" bookPageNumber={bookPageNumber}>
+        <div className="book-body flex h-full flex-col px-7 pb-10 pt-8 md:px-9 md:pt-10">
           {paragraphs.map((p, i) => (
             <p
               key={i}

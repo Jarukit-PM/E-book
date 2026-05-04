@@ -31,14 +31,13 @@ const TOC_ANCHORS: TocAnchor[] = [
   "epilogue",
 ];
 
-function buildTocEntries(meta: PageManifest["meta"]): TocEntry[] {
-  return meta.tocEntries
-    .map((label, i) => {
-      const anchor = TOC_ANCHORS[i];
-      if (!anchor) return null;
-      return { label, anchor };
-    })
-    .filter((x): x is TocEntry => x !== null);
+function buildTocEntries(m: PageManifest): TocEntry[] {
+  return TOC_ANCHORS.map((anchor, i) => {
+    const flipIndex = m.tocAnchors[anchor];
+    if (typeof flipIndex !== "number") return null;
+    const label = m.meta.tocEntries[i] ?? anchor;
+    return { label, anchor, displayPage: flipIndex + 1 };
+  }).filter((x): x is TocEntry => x !== null);
 }
 
 function computeFlipDims(): { width: number; height: number } {
@@ -79,31 +78,40 @@ function renderSequenceItem(
   const key = `page-${index}`;
   switch (item.type) {
     case "cover-front":
-      return <CoverFront key={key} book={ctx.meta} />;
+      return (
+        <CoverFront
+          key={key}
+          book={ctx.meta}
+          bookPageNumber={index + 1}
+        />
+      );
     case "cover-back":
-      return <CoverBack key={key} />;
+      return <CoverBack key={key} bookPageNumber={index + 1} />;
     case "toc":
       return (
         <TableOfContents
           key={key}
           entries={ctx.tocEntries}
           onJump={ctx.onJump}
+          bookPageNumber={index + 1}
         />
       );
     case "end":
-      return <EndPage key={key} />;
+      return <EndPage key={key} bookPageNumber={index + 1} />;
     case "markdown": {
       const src = mdByFile.get(item.file);
+      const n = index + 1;
       if (src === undefined) {
         console.error(`Missing markdown: ${item.file}`);
         return (
           <PaperFromMarkdown
             key={key}
+            bookPageNumber={n}
             source={`---json\n${JSON.stringify({ kind: "body", dropCap: false })}\n---\n\n(ไม่พบไฟล์ ${item.file})`}
           />
         );
       }
-      return <PaperFromMarkdown key={key} source={src} />;
+      return <PaperFromMarkdown key={key} bookPageNumber={n} source={src} />;
     }
     default:
       return null;
@@ -113,10 +121,7 @@ function renderSequenceItem(
 export default function App() {
   const bookRef = useRef<{ pageFlip: () => PageFlipApi } | null>(null);
   const mdByFile = useMemo(() => collectMarkdownModules(), []);
-  const tocEntries = useMemo(
-    () => buildTocEntries(manifest.meta),
-    [],
-  );
+  const tocEntries = useMemo(() => buildTocEntries(manifest), []);
   const anchorToIndex = manifest.tocAnchors;
   const sequence = manifest.sequence;
 
