@@ -40,17 +40,25 @@ function buildTocEntries(m: PageManifest): TocEntry[] {
   }).filter((x): x is TocEntry => x !== null);
 }
 
-function computeFlipDims(): { width: number; height: number } {
+/** ขนาดหน้าเดสก์ท็อป (สเปรดสองหน้าเมื่อพื้นที่พอ) */
+const DESKTOP_PAGE_W = 540;
+const DESKTOP_PAGE_H = 760;
+const PAGE_ASPECT = DESKTOP_PAGE_H / DESKTOP_PAGE_W;
+
+/** ต่ำกว่านี้ถือว่าโหมดมือถือ — ปรับขนาดหน้า + ให้ StPageFlip ใช้ portrait (ทีละ 1 หน้า) */
+const MOBILE_MAX_WIDTH = 768;
+
+function computeFlipPageSize(): { width: number; height: number } {
   if (typeof window === "undefined") {
-    return { width: 480, height: 680 };
+    return { width: DESKTOP_PAGE_W, height: DESKTOP_PAGE_H };
   }
-  const narrow = window.innerWidth < 640;
-  const w = narrow
-    ? Math.max(280, Math.min(window.innerWidth - 20, 420))
-    : Math.min(520, Math.max(400, Math.floor(window.innerWidth / 2.15)));
-  const h = narrow
-    ? Math.max(420, Math.min(window.innerHeight * 0.58, 640))
-    : Math.min(760, Math.max(520, Math.floor(window.innerHeight * 0.72)));
+  const vw = window.innerWidth;
+  if (vw >= MOBILE_MAX_WIDTH) {
+    return { width: DESKTOP_PAGE_W, height: DESKTOP_PAGE_H };
+  }
+  const gutter = 20;
+  const w = Math.min(440, Math.max(300, vw - gutter));
+  const h = Math.round(w * PAGE_ASPECT);
   return { width: w, height: h };
 }
 
@@ -126,7 +134,29 @@ export default function App() {
   const sequence = manifest.sequence;
 
   const [page, setPage] = useState(0);
-  const [dims, setDims] = useState(computeFlipDims);
+  const [pageSize, setPageSize] = useState(computeFlipPageSize);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    const schedule = () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        setPageSize((prev) => {
+          const next = computeFlipPageSize();
+          if (prev.width === next.width && prev.height === next.height) return prev;
+          return next;
+        });
+      }, 120);
+    };
+    schedule();
+    window.addEventListener("resize", schedule);
+    window.addEventListener("orientationchange", schedule);
+    return () => {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+      window.removeEventListener("resize", schedule);
+      window.removeEventListener("orientationchange", schedule);
+    };
+  }, []);
 
   const pageCount = sequence.length;
   const pageCountRef = useRef(pageCount);
@@ -156,27 +186,6 @@ export default function App() {
     },
     [anchorToIndex],
   );
-
-  useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout> | undefined;
-    const schedule = () => {
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        setDims((prev) => {
-          const next = computeFlipDims();
-          if (prev.width === next.width && prev.height === next.height) {
-            return prev;
-          }
-          return next;
-        });
-      }, 150);
-    };
-    window.addEventListener("resize", schedule);
-    return () => {
-      if (timeoutId !== undefined) clearTimeout(timeoutId);
-      window.removeEventListener("resize", schedule);
-    };
-  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -229,26 +238,26 @@ export default function App() {
         </p>
       </header>
 
-      <main className="flex min-h-0 flex-1 flex-col items-center justify-center px-1 pb-32 pt-1 md:px-4 md:pb-36">
+      <main className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-stretch justify-center overflow-x-auto px-1 pb-32 pt-1 md:px-4 md:pb-36">
         <HTMLFlipBook
-          key={`flip-${dims.width}-${dims.height}`}
+          key={`flip-${pageSize.width}-${pageSize.height}`}
           ref={bookRef}
-          className="stf-book"
-          style={{ marginLeft: "auto", marginRight: "auto" }}
-          width={dims.width}
-          height={dims.height}
-          minWidth={280}
-          maxWidth={1200}
-          minHeight={400}
-          maxHeight={900}
+          className="stf-book block w-full min-w-0 max-w-[min(100%,2400px)]"
+          style={{ width: "100%" }}
+          width={pageSize.width}
+          height={pageSize.height}
+          minWidth={pageSize.width}
+          maxWidth={pageSize.width}
+          minHeight={pageSize.height}
+          maxHeight={pageSize.height}
           maxShadowOpacity={0.55}
           drawShadow
           flippingTime={780}
           usePortrait
           startPage={0}
           startZIndex={0}
-          autoSize
-          size="stretch"
+          autoSize={false}
+          size="fixed"
           showCover
           mobileScrollSupport
           clickEventForward

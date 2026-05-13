@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { Fragment, forwardRef } from "react";
 import { PageFrame } from "./PageFrame";
 import ch1 from "../asset/1.png";
 import ch2 from "../asset/2.png";
@@ -53,6 +53,44 @@ function splitParagraphs(body: string): string[] {
     .filter(Boolean);
 }
 
+/** แปลง **ข้อความ** ในแต่ละบรรทัดเป็นตัวหนา และรักษา line break ภายในย่อหน้า */
+function RichParagraph({
+  text,
+  className,
+}: {
+  text: string;
+  className?: string;
+}) {
+  const lines = text.split("\n");
+  return (
+    <p className={className}>
+      {lines.map((line, lineIndex) => (
+        <Fragment key={lineIndex}>
+          {lineIndex > 0 ? <br /> : null}
+          <RichLine text={line} />
+        </Fragment>
+      ))}
+    </p>
+  );
+}
+
+function RichLine({ text }: { text: string }) {
+  const parts = text.split(/\*\*/);
+  return (
+    <>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <strong key={i} className="font-semibold text-ink">
+            {part}
+          </strong>
+        ) : (
+          <Fragment key={i}>{part}</Fragment>
+        ),
+      )}
+    </>
+  );
+}
+
 type Props = { source: string; bookPageNumber?: number };
 
 export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
@@ -70,12 +108,11 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
               {meta.quote}
             </blockquote>
             {paragraphs.map((p, i) => (
-              <p
+              <RichParagraph
                 key={i}
+                text={p}
                 className={`mt-4 text-justify font-serif text-sm leading-relaxed text-ink md:mt-5 md:text-[0.95rem] ${i === 0 ? "dropcap" : ""}`}
-              >
-                {p}
-              </p>
+              />
             ))}
           </div>
         </PageFrame>
@@ -114,12 +151,11 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
               </div>
             ) : null}
             {paragraphs.map((p, i) => (
-              <p
+              <RichParagraph
                 key={i}
+                text={p}
                 className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
-              >
-                {p}
-              </p>
+              />
             ))}
           </div>
         </PageFrame>
@@ -145,12 +181,11 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
               </>
             ) : null}
             {paragraphs.map((p, i) => (
-              <p
+              <RichParagraph
                 key={i}
+                text={p}
                 className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
-              >
-                {p}
-              </p>
+              />
             ))}
           </div>
         </PageFrame>
@@ -161,12 +196,11 @@ export const PaperFromMarkdown = forwardRef<HTMLDivElement, Props>(
       <PageFrame ref={ref} variant="paper" bookPageNumber={bookPageNumber}>
         <div className="book-body flex h-full flex-col px-7 pb-10 pt-8 md:px-9 md:pt-10">
           {paragraphs.map((p, i) => (
-            <p
+            <RichParagraph
               key={i}
+              text={p}
               className={`mb-2 text-justify font-serif text-sm leading-normal text-ink md:mb-2.5 md:text-[0.95rem] md:leading-relaxed ${meta.dropCap && i === 0 ? "dropcap" : ""}`}
-            >
-              {p}
-            </p>
+            />
           ))}
         </div>
       </PageFrame>
